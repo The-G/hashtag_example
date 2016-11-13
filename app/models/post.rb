@@ -3,7 +3,7 @@ class Post < ActiveRecord::Base
 
   after_create do
     post = Post.find_by(id: self.id)
-    hashtags = self.body.scan(/#\w+/) #이부분 한글 되도록 변경해야함
+    hashtags = self.body.scan(/#\p{Word}+/)
     hashtags.uniq.map do |hashtag|
       tag = Tag.find_or_create_by(name: hashtag.downcase.delete('#'))
       post.tags << tag
@@ -13,7 +13,7 @@ class Post < ActiveRecord::Base
   before_update do
     post = Post.find_by(id: self.id)
     post.tags.clear
-    hashtags = self.body.scan(/#\w+/)
+    hashtags = self.body.scan(/#\p{Word}+/)
     hashtags.uniq.map do |hashtag|
       tag = Tag.find_or_create_by(name: hashtag.downcase.delete('#'))
       post.tags << tag
